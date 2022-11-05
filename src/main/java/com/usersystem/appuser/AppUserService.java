@@ -3,6 +3,7 @@ package com.usersystem.appuser;
 import com.usersystem.registration.token.ConfirmationToken;
 import com.usersystem.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import org.apache.http.util.EntityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -52,7 +53,7 @@ public class AppUserService implements UserDetailsService {
 
         // TODO: Send Verification Email
 
-        return "Signup Successful for " + appUser.getEmail() + "\nToken: " + token + "\nEncrypted Password: " + appUser.getPassword();
+        return token;
     }
 
     public int enableAppUser(String email) {
