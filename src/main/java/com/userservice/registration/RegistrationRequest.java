@@ -1,4 +1,4 @@
-package com.usersystem.registration;
+package com.userservice.registration;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -12,6 +12,7 @@ import lombok.ToString;
 public class RegistrationRequest {
     private final String firstName;
     private final String lastName;
+    private final String displayName;
     private final String password;
     private final String email;
 }

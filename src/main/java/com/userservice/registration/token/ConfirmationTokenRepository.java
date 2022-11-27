@@ -1,4 +1,4 @@
-package com.usersystem.registration.token;
+package com.userservice.registration.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

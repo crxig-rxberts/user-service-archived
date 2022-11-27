@@ -1,4 +1,4 @@
-package com.usersystem.appuser;
+package com.userservice.appuser;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;

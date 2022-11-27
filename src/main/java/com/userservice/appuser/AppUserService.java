@@ -1,9 +1,8 @@
-package com.usersystem.appuser;
+package com.userservice.appuser;
 
-import com.usersystem.registration.token.ConfirmationToken;
-import com.usersystem.registration.token.ConfirmationTokenService;
+import com.userservice.registration.token.ConfirmationToken;
+import com.userservice.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
-import org.apache.http.util.EntityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

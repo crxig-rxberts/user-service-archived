@@ -1,4 +1,4 @@
-package com.usersystem.appuser;
+package com.userservice.appuser;
 
 
 import lombok.EqualsAndHashCode;
@@ -33,6 +33,8 @@ public class AppUser implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
+
+    private String displayName;
     private String email;
     private String password;
     @Enumerated(EnumType.STRING)
@@ -41,6 +43,7 @@ public class AppUser implements UserDetails {
     private Boolean enabled = false;
     public AppUser(String firstName,
                    String lastName,
+                   String displayName,
                    String email,
                    String password,
                    AppUserRole appUserRole) {
@@ -70,6 +73,8 @@ public class AppUser implements UserDetails {
     public String getLastName() {
         return lastName;
     }
+
+    public String getDisplayName() { return displayName; }
 
     @Override
     public boolean isAccountNonExpired() {

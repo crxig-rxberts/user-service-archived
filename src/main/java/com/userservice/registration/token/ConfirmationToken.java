@@ -1,6 +1,6 @@
-package com.usersystem.registration.token;
+package com.userservice.registration.token;
 
-import com.usersystem.appuser.AppUser;
+import com.userservice.appuser.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

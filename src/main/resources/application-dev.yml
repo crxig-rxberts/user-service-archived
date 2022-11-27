@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    password: CRXOagUPsBxmPMoxsT25
+    url: user-service.cd2hwitlzmny.eu-west-1.rds.amazonaws.com
+    username: postgres
+  jpa:
+    hibernate:
+      ddl-auto:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+
+
+
+
+    spring:
+      datasource:
+        password: password
+        url: jdbc:postgresql://localhost:5432/registration
+        username: craig
+      jpa:
+        hibernate:
+          ddl-auto: create-drop
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.PostgreSQLDialect
+            format_sql: true
+        show-sql: true

@@ -1,6 +1,6 @@
-package com.usersystem.security.config;
+package com.userservice.security.config;
 
-import com.usersystem.appuser.AppUserService;
+import com.userservice.appuser.AppUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

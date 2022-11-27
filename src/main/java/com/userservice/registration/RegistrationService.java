@@ -1,11 +1,11 @@
-package com.usersystem.registration;
+package com.userservice.registration;
 
-import com.usersystem.appuser.AppUser;
-import com.usersystem.appuser.AppUserRole;
-import com.usersystem.appuser.AppUserService;
-import com.usersystem.email.EmailSender;
-import com.usersystem.registration.token.ConfirmationToken;
-import com.usersystem.registration.token.ConfirmationTokenService;
+import com.userservice.appuser.AppUser;
+import com.userservice.appuser.AppUserRole;
+import com.userservice.appuser.AppUserService;
+import com.userservice.email.EmailSender;
+import com.userservice.registration.token.ConfirmationToken;
+import com.userservice.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +31,7 @@ public class RegistrationService {
                 new AppUser(
                         request.getFirstName(),
                         request.getLastName(),
+                        request.getDisplayName(),
                         request.getEmail(),
                         request.getPassword(),
                         AppUserRole.USER

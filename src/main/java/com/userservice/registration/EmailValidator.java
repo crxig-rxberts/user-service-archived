@@ -1,6 +1,5 @@
-package com.usersystem.registration;
+package com.userservice.registration;
 
-import com.sun.xml.bind.v2.TODO;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Predicate;

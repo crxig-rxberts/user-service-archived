@@ -1,4 +1,4 @@
-package com.usersystem.appuser;
+package com.userservice.appuser;
 
 public enum AppUserRole {
     USER,
