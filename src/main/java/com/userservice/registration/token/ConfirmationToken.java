@@ -1,6 +1,6 @@
 package com.userservice.registration.token;
 
-import com.userservice.appuser.AppUser;
+import com.userservice.user.AppUser;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,7 +47,6 @@ public class ConfirmationToken {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiredAt;
-        this.confirmedAt = confirmedAt;
         this.appUser = appUser;
     }
 }

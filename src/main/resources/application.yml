@@ -5,17 +5,17 @@ server:
 
 spring:
   datasource:
-    password: CRXOagUPsBxmPMoxsT25
-    url: jdbc:postgresql://user-service.cd2hwitlzmny.eu-west-1.rds.amazonaws.com:5432/registration
-    username: postgres
+    password: password
+    url: jdbc:postgresql://localhost:5432/registration
+    username: craig
   jpa:
     hibernate:
-      ddl-auto:
+      ddl-auto: create-drop
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: true
+      show-sql: true
   mail:
     host: localhost
     port: 1025

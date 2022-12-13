@@ -7,6 +7,6 @@
 
 
 
-// To test the email sending of this application you can run the mail server in a docker image running the following command
+// To test the email sending of this application you can run the mai server in a docker image running the following command
 
     docker run -p 1080:1080 -p 1025:1025 maildev/maildev
