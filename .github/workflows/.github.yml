@@ -3,6 +3,7 @@ name: ...
 jobs:
   build-job:
     name: build project
+    runs-on: ubuntu-latest
     steps:
       - run: java --version
         name: Check jdk version
