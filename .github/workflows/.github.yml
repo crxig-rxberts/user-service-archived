@@ -1,2 +1,8 @@
 on: push
 name: ...
+jobs:
+  build-job:
+    name: build project
+    steps:
+      - run: java --version
+        name: Check jdk version
