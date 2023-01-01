@@ -23,7 +23,7 @@ jobs:
     steps:
       #- run: sudo service postgresql start
       #- run: psql registration
-      - run: mvn exec:java -Dexec.mainClass=com.userservice.Application
+      - run: mvn exec:java "-Dexec.mainClass=com.userservice.Application"
         name: Start application
 
 
