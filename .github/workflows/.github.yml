@@ -1,9 +1,16 @@
 on: push
 name: ...
 jobs:
+
+
+
   build-job:
     name: build project
     runs-on: ubuntu-latest
     steps:
-      - run: java --version
-        name: Check jdk version
+      - run: sudo service postgresql start
+      - run: psql registration
+      - run: mvn exec:java -Dexec.mainClass=com.userservice.Application
+        name: Start application
+
+
