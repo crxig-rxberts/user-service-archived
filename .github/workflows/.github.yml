@@ -34,10 +34,16 @@ jobs:
         run: mvn --batch-mode -DskipTests package
 
       - name: install psql
-        run: sudo apt-get install postgresql
+        run: sudo apt install postgresql postgresql-contrib
 
       - name: start psql
-        run: sudo service postgresql start
+        run: sudo systemctl start postgresql.service
+
+      - name: switch account
+        run: sudo -i -u postgres
+
+      - name: create user
+        run: sudo -u postgres createuser -s user
 
       - name: create db
         run: psql registration
