@@ -39,8 +39,6 @@ jobs:
       - name: start psql
         run: sudo systemctl start postgresql.service
 
-      - name: switch account
-        run: sudo -i -u postgres
 
       - name: create user
         run: sudo -u postgres createuser -s user
