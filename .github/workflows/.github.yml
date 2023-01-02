@@ -26,6 +26,9 @@ jobs:
       - name: start psql
         run: sudo service postgresql start
 
+      - name: temp test
+        run: postgresql -V
+
 
       - name: create db
         run: psql registration
