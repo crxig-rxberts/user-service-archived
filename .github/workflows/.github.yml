@@ -23,6 +23,10 @@ jobs:
       - name: install psql
         run: sudo apt install postgresql
 
+      - name: start psql
+        run: sudo service postgresql start
+
+
       - name: create db
         run: psql registration
 
