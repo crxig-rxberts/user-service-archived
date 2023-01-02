@@ -33,11 +33,8 @@ jobs:
       - name: Build
         run: mvn --batch-mode -DskipTests package
 
-      - name: install psql
-        run: sudo apt install postgresql postgresql-contrib
-
-      - name: start psql
-        run: sudo systemctl start postgresql.service
+      - name: Create DB
+        run: psql registration
 
       - name: Test
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
