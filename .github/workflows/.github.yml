@@ -3,7 +3,10 @@ name: ...
 jobs:
 
 
-  build:
+#
+# Initial build job, run tests
+#
+  Build:
 
     runs-on: ubuntu-latest
 
@@ -12,7 +15,7 @@ jobs:
         image: postgres:12.2
         env:
           POSTGRES_PASSWORD: password
-          POSTGRES_USER: user
+          POSTGRES_USER: postgres
           POSTGRES_DB: registration
         ports:
           - 5432:5432
@@ -42,39 +45,3 @@ jobs:
           path: target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
-
-
-
-
-
-#  build-job:
-#    name: build project
-#    runs-on: ubuntu-latest
-
-
-
- #       options:
-               #    --health-cmd pg_isready
-               #    --health-interval 10s
-               #    --health-timeout 5s
-               #    --health-retries 5
-#    steps:
-      #- run: sudo service postgresql start
-      #- run: psql registration
-#     - run: mvn exec:java "-Dexec.mainClass=com.userservice.Application"
-#        name: Start application
-
-
-#    services:
-#      postgres:
-#        image: postgres:12.2
-#        env:
-#          POSTGRES_PASSWORD: postgres
-#          POSTGRES_USER: postgres
-#        ports:
-#          - 5432:5432
-#options:
-#  --health-cmd pg_isready
-#  --health-interval 10s
-#  --health-timeout 5s
-#  --health-retries 5
