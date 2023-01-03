@@ -13,6 +13,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: password
           POSTGRES_USER: user
+          POSTGRES_DB: registration
         ports:
           - 5432:5432
         options:
@@ -30,19 +31,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
-      - name: Build
-        run: mvn --batch-mode -DskipTests package
-
-      - name: start psql
-        run: sudo systemctl start postgresql.service
-
-      - name: connect psql user
-        run: psql -U user
-
-      - name: Create db
-        run: CREATE DATABASE registration
-
-      - name: Test
+      - name: Run Application Tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
 
       - name: Report
