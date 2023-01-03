@@ -3,7 +3,7 @@
 
 ## Running locally
 
-### To run the service locally you will need to run psql server locally and create user
+### To run user-service locally you will need to run a psql server locally
 
 MacOS
 
