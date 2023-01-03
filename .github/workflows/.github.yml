@@ -36,8 +36,11 @@ jobs:
       - name: start psql
         run: sudo systemctl start postgresql.service
 
-      - name: Create DB
-        run: psql registration
+      - name: connect psql user
+        run: psql -U user
+
+      - name: Create db
+        run: CREATE DATABASE registration
 
       - name: Test
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
