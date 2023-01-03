@@ -5,11 +5,13 @@
 
 ### To run the service locally you will need to run psql server locally and create user
 
-MAC:
+MacOS
+
     brew install postgresql
     brew services start postgresql
 
-UBUNTU:
+Ubuntu 
+
     sudo apt install postgresql
     sudo systemctl start postgresql.service
 
