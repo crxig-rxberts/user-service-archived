@@ -1,4 +1,4 @@
-package com.userservice.email;
+package com.userservice.registration.email;
 
 public interface EmailSender {
     void send(String to, String email);

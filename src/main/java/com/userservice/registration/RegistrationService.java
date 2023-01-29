@@ -1,26 +1,30 @@
 package com.userservice.registration;
 
-import com.userservice.email.EmailBuilder;
-import com.userservice.email.EmailValidator;
-import com.userservice.user.AppUser;
-import com.userservice.user.AppUserRole;
-import com.userservice.user.AppUserService;
-import com.userservice.email.EmailSender;
+import com.userservice.registration.email.EmailBuilder;
+import com.userservice.registration.email.EmailValidator;
+import com.userservice.user.*;
+import com.userservice.registration.email.EmailSender;
 import com.userservice.registration.token.ConfirmationToken;
 import com.userservice.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class RegistrationService {
+public class RegistrationService implements UserDetailsService {
     private final EmailValidator emailValidator;
-    private final AppUserService appUserService;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
+    private final AppUserRepository appUserRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
     public String register(RegistrationRequest request) {
@@ -29,7 +33,7 @@ public class RegistrationService {
             throw new IllegalStateException("Email not valid");
         }
 
-        String token = appUserService.signUpUser(
+        String token = signUpUser(
                 new AppUser(
                         request.getFirstName(),
                         request.getLastName(),
@@ -44,6 +48,7 @@ public class RegistrationService {
 
         return token;
     }
+
 
     @Transactional
     public String confirmToken(String token) {
@@ -63,11 +68,44 @@ public class RegistrationService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
-        appUserService.enableAppUser(
+        enableAppUser(
                 confirmationToken.getAppUser().getEmail());
-        return "Confirmed";
+        return "User email has been confirmed";
     }
 
 
+    public String signUpUser(AppUser appUser) {
 
+        if (AppUserService.getUserByEmail(appUser.getEmail()) != null) {
+            throw new IllegalStateException("Email already in use");
+        }
+
+        String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
+        appUser.setPassword(encodedPassword);
+
+        appUserRepository.save(appUser);
+
+        String token = UUID.randomUUID().toString();
+        ConfirmationToken confirmationToken = new ConfirmationToken(
+                token,
+                LocalDateTime.now(),
+                LocalDateTime.now().plusMinutes(30),
+                appUser
+        );
+
+        confirmationTokenService.saveConfirmationToken(confirmationToken);
+
+        // TODO: Send Verification Email after confirmation
+
+        return token;
+    }
+
+    public void enableAppUser(String email) {
+        appUserRepository.enableAppUser(email);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return null;
+    }
 }
