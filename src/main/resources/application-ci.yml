@@ -1,7 +1,7 @@
 spring:
   datasource:
     password: ${PSQL_CI_PASSWORD}
-    url: jdbc:postgresql://user-service.cd2hwitlzmny.eu-west-1.rds.amazonaws.com:5432/user-service
+    url: ${PSQL_CI_URL}
     username: ${PSQL_CI_USERNAME}
   jpa:
     hibernate:

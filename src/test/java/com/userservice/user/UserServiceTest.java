@@ -1,34 +1,28 @@
 package com.userservice.user;
 
+import com.userservice.registration.RegistrationService;
 import com.userservice.registration.token.ConfirmationTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
     // TODO: create test profile
 @ActiveProfiles("local")
-public class UserServiceTest {
+class UserServiceTest {
 
     @Autowired
     private AppUserService appUserService;
-
     @Autowired
     private AppUserRepository appUserRepository;
-
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
-
-    // private void loadUserByUsernameTest();
-
-
-    // Will return a token
-    // given a valid registration request
-    // when signUpUser is called
-    // then expect 200 response with toke
+    @Autowired
+    RegistrationService registrationService;
 
     @Test
     void whenSignUpUserIsPassedAValidAppUserThenExpectValidBehaviour() {
@@ -63,7 +57,7 @@ public class UserServiceTest {
     }
 
     private String signUpValidUser() {
-        return appUserService.signUpUser(validAppUser);
+        return registrationService.signUpUser(validAppUser);
     }
 
     private boolean appUserValuesAreValid() {

@@ -33,7 +33,6 @@ public class AppUser implements UserDetails {
     private Long id;
     private String firstName;
     private String lastName;
-
     private String displayName;
     private String email;
     private String password;
@@ -67,9 +66,7 @@ public class AppUser implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return email;
-    }
+    public String getUsername() { return email; }
 
     public String getFirstName() {
         return firstName;
@@ -97,7 +94,6 @@ public class AppUser implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return true;
     }
-
     @Override
     public boolean isEnabled() {
         return enabled;
