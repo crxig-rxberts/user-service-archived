@@ -16,9 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class UserServiceTest {
 
     @Autowired
-    private AppUserService appUserService;
-    @Autowired
-    private AppUserRepository appUserRepository;
+    private UserRepository userRepository;
     @Autowired
     ConfirmationTokenRepository confirmationTokenRepository;
     @Autowired
@@ -40,7 +38,7 @@ class UserServiceTest {
     //
 
 
-    private final AppUser validAppUser = AppUser.builder()
+    private final UserEntity validUserEntity = UserEntity.builder()
             .firstName("Mr")
             .lastName("Test")
             .displayName("Mr. Test")
@@ -49,7 +47,7 @@ class UserServiceTest {
             .build();
 
     private boolean appUserExistsInAppUserRepository() {
-        return appUserRepository.findByEmail(validAppUser.getEmail()).isPresent();
+        return userRepository.findByEmail(validUserEntity.getEmail()).isPresent();
     }
 
     private boolean confirmationTokenExistsInCTRepository(String token) {
@@ -57,7 +55,7 @@ class UserServiceTest {
     }
 
     private String signUpValidUser() {
-        return registrationService.signUpUser(validAppUser);
+        return registrationService.signUpUser(validUserEntity);
     }
 
     private boolean appUserValuesAreValid() {

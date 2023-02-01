@@ -1,18 +1,33 @@
 package com.userservice.user;
 
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "api/v1/user")
 @AllArgsConstructor
+@Slf4j
 public class UserController {
 
-    @GetMapping
-    public AppUser getAppUser(@RequestParam String email) { return AppUserService.getUserByEmail(email); }
+    private UserRepository userRepository;
 
-    // TODO: create endpoint just for login, implement logic in this project to return error messages to client
+    private UserService userService;
+
+    @GetMapping
+    public Optional<UserEntity> getUserEntity(@RequestParam String email) {
+
+        return userRepository.findByEmail(email);
+    }
+
+    @PutMapping
+    public void updateUserCredentials(@RequestBody UserRequest request) {
+
+        userService.updateUserCredentials(request);
+    }
+
+
 }

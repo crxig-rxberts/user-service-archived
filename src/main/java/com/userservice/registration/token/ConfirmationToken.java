@@ -1,6 +1,6 @@
 package com.userservice.registration.token;
 
-import com.userservice.user.AppUser;
+import com.userservice.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,15 +38,15 @@ public class ConfirmationToken {
             nullable = false,
             name = "app_user_id"
     )
-    private AppUser appUser;
+    private UserEntity userEntity;
 
     public ConfirmationToken(String token,
                              LocalDateTime createdAt,
                              LocalDateTime expiredAt,
-                             AppUser appUser) {
+                             UserEntity userEntity) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiredAt;
-        this.appUser = appUser;
+        this.userEntity = userEntity;
     }
 }

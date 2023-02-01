@@ -7,6 +7,8 @@ import com.userservice.registration.email.EmailSender;
 import com.userservice.registration.token.ConfirmationToken;
 import com.userservice.registration.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,11 +21,12 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class RegistrationService implements UserDetailsService {
     private final EmailValidator emailValidator;
     private final ConfirmationTokenService confirmationTokenService;
     private final EmailSender emailSender;
-    private final AppUserRepository appUserRepository;
+    private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -34,13 +37,13 @@ public class RegistrationService implements UserDetailsService {
         }
 
         String token = signUpUser(
-                new AppUser(
+                new UserEntity(
                         request.getFirstName(),
                         request.getLastName(),
                         request.getDisplayName(),
                         request.getEmail(),
                         request.getPassword(),
-                        AppUserRole.USER
+                        UserRole.USER
                 )
         );
         String link = "https://localhost:8080/api/v1/registration/confirm?token=" + token;
@@ -55,53 +58,56 @@ public class RegistrationService implements UserDetailsService {
         ConfirmationToken confirmationToken = confirmationTokenService
                 .getToken(token)
                 .orElseThrow(() ->
-                        new IllegalStateException("Token not found"));
+                        new IllegalStateException("Token not found."));
 
         if (confirmationToken.getConfirmedAt() != null) {
-            throw new IllegalStateException("Email already confirmed");
+            throw new IllegalStateException("Email already confirmed.");
         }
 
         LocalDateTime expiredAt = confirmationToken.getExpiresAt();
 
         if (expiredAt.isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Token expired, please re-register");
+            // TODO: create method to delete user from DB.
+            throw new IllegalStateException("Token expired, please re-register.");
         }
 
         confirmationTokenService.setConfirmedAt(token);
+        log.info("User account enabled. Correlation Id: " + MDC.get("x-correlation-id"));
         enableAppUser(
-                confirmationToken.getAppUser().getEmail());
+                confirmationToken.getUserEntity().getEmail());
+
+        // TODO: Send Verification Email after confirmation
         return "User email has been confirmed";
     }
 
 
-    public String signUpUser(AppUser appUser) {
+    public String signUpUser(UserEntity userEntity) {
 
-        if (AppUserService.getUserByEmail(appUser.getEmail()) != null) {
+        if (userRepository.findByEmail(userEntity.getEmail()).isPresent()) {
             throw new IllegalStateException("Email already in use");
         }
 
-        String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
-        appUser.setPassword(encodedPassword);
+        String encodedPassword = bCryptPasswordEncoder.encode(userEntity.getPassword());
+        userEntity.setPassword(encodedPassword);
 
-        appUserRepository.save(appUser);
+        userRepository.save(userEntity);
+        log.info("User details successfully saved to database. Correlation Id: " + MDC.get("x-correlation-id"));
 
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
                 token,
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(30),
-                appUser
+                userEntity
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-
-        // TODO: Send Verification Email after confirmation
 
         return token;
     }
 
     public void enableAppUser(String email) {
-        appUserRepository.enableAppUser(email);
+        userRepository.enableAppUser(email);
     }
 
     @Override
