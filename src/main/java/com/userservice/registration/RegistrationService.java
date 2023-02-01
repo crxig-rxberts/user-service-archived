@@ -72,9 +72,8 @@ public class RegistrationService implements UserDetailsService {
         }
 
         confirmationTokenService.setConfirmedAt(token);
+        enableAppUser(confirmationToken.getUserEntity().getEmail());
         log.info("User account enabled. Correlation Id: " + MDC.get("x-correlation-id"));
-        enableAppUser(
-                confirmationToken.getUserEntity().getEmail());
 
         // TODO: Send Verification Email after confirmation
         return "User email has been confirmed";
@@ -91,7 +90,7 @@ public class RegistrationService implements UserDetailsService {
         userEntity.setPassword(encodedPassword);
 
         userRepository.save(userEntity);
-        log.info("User details successfully saved to database. Correlation Id: " + MDC.get("x-correlation-id"));
+        log.info("User details successfully saved to DB. Correlation Id: " + MDC.get("x-correlation-id"));
 
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken(
@@ -102,6 +101,7 @@ public class RegistrationService implements UserDetailsService {
         );
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
+        log.info("Confirmation token succesfully saved to DB. Correlation Id: " + MDC.get("x-correlation-id"));
 
         return token;
     }

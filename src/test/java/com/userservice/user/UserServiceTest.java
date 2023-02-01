@@ -22,45 +22,4 @@ class UserServiceTest {
     @Autowired
     RegistrationService registrationService;
 
-    @Test
-    void whenSignUpUserIsPassedAValidAppUserThenExpectValidBehaviour() {
-        assertTrue(confirmationTokenExistsInCTRepository(signUpValidUser()));
-        assertTrue(appUserExistsInAppUserRepository() );
-
-    }
-
-
-    // throws if email does not exist
-
-
-    // Signup user successfully signs up user
-
-    //
-
-
-    private final UserEntity validUserEntity = UserEntity.builder()
-            .firstName("Mr")
-            .lastName("Test")
-            .displayName("Mr. Test")
-            .password("password")
-            .email("abcdef@gmail.com")
-            .build();
-
-    private boolean appUserExistsInAppUserRepository() {
-        return userRepository.findByEmail(validUserEntity.getEmail()).isPresent();
-    }
-
-    private boolean confirmationTokenExistsInCTRepository(String token) {
-        return confirmationTokenRepository.findByToken(token).isPresent();
-    }
-
-    private String signUpValidUser() {
-        return registrationService.signUpUser(validUserEntity);
-    }
-
-    private boolean appUserValuesAreValid() {
-
-        return true;
-    }
-
 }

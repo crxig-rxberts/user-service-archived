@@ -17,7 +17,7 @@ import java.util.UUID;
 @Component
 public class HttpServerRequestFilter extends OncePerRequestFilter {
 
-    private String X_CORRELATION_ID = "x-correlation-id";
+    public String X_CORRELATION_ID = "x-correlation-id";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,7 +34,7 @@ public class HttpServerRequestFilter extends OncePerRequestFilter {
 
         } finally {
 
-            log.info("Request End - URI: {}. Method: {}", request.getRequestURI(),request.getMethod());
+            log.info("Request End - URI: {}. Method: {}", request.getRequestURI(), request.getMethod());
 
             MDC.clear();
         }

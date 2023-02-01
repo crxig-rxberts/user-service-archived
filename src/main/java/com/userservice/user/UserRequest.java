@@ -1,5 +1,6 @@
 package com.userservice.user;
 
+import com.sun.istack.NotNull;
 import lombok.*;
 
 @Getter
@@ -9,6 +10,7 @@ import lombok.*;
 @Builder
 public class UserRequest {
 
+    @NotNull
     private String email;
     private String password;
     private String displayName;

@@ -2,7 +2,6 @@ package com.userservice.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,16 +17,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public Optional<UserEntity> getUserEntity(@RequestParam String email) {
-
-        return userRepository.findByEmail(email);
-    }
+    public Optional<UserEntity> getUserEntity(@RequestParam String email) { return userRepository.findByEmail(email); }
 
     @PutMapping
-    public void updateUserCredentials(@RequestBody UserRequest request) {
-
-        userService.updateUserCredentials(request);
-    }
+    public void updateUserCredentials(@RequestBody UserRequest request) { userService.updateUserCredentials(request); }
 
 
 }
