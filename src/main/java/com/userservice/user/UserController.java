@@ -2,6 +2,7 @@ package com.userservice.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -20,7 +21,8 @@ public class UserController {
     public Optional<UserEntity> getUserEntity(@RequestParam String email) { return userRepository.findByEmail(email); }
 
     @PutMapping
-    public void updateUserCredentials(@RequestBody UserRequest request) { userService.updateUserCredentials(request); }
-
-
+    public ResponseEntity<String> update(@RequestBody UserRequest request) {
+        userService.updateUserCredentials(request);
+        return ResponseEntity.ok("Record updated successfully.");
+    }
 }

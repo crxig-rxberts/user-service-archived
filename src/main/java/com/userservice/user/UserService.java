@@ -2,10 +2,10 @@ package com.userservice.user;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 @Service
 @AllArgsConstructor
 @Slf4j
@@ -17,14 +17,17 @@ public class UserService {
 
     public void updateUserCredentials(UserRequest request) {
 
-        if(request.getPassword() != null) userRepository.updatePassword(request.getEmail(), bCryptPasswordEncoder.encode(request.getPassword()));
-        if(request.getDisplayName() != null) userRepository.updateDisplayName(request.getEmail(), request.getDisplayName());
-        if(request.getNewEmail() != null) userRepository.updateEmail(request.getEmail(), request.getNewEmail());
-        if(request.getFirstName() != null) userRepository.updateFirstName(request.getEmail(), request.getFirstName());
-        if(request.getLastName() != null) userRepository.updateLastName(request.getEmail(), request.getLastName());
-        if(request.getLocked() != null) userRepository.lockAccount(request.getEmail(), request.getLocked());
+        UserEntity entity = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
+                new EntityNotFoundException("Entity not found with email: " + request.getEmail()));
 
-        log.info("User credentials modified on DB. Correlation Id: " + MDC.get("x-correlation-id"));
+        if (request.getPassword() != null) entity.setEmail(bCryptPasswordEncoder.encode(request.getPassword()));
+        if (request.getDisplayName() != null) entity.setDisplayName(request.getDisplayName());
+        if (request.getNewEmail() != null) entity.setEmail(request.getNewEmail());
+        if (request.getFirstName() != null) entity.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) entity.setLastName(request.getLastName());
+        if (request.getLocked()) entity.setLocked(true);
+
+        userRepository.save(entity);
 
 
     }

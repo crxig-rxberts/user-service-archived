@@ -15,10 +15,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Bean
     Optional<UserEntity> findByEmail(String email);
 
+
+    // TODO: Use generic methods so that the below can be reduced to one method:
+
     @Transactional
     @Modifying
     @Query("UPDATE UserEntity user SET user.enabled = TRUE WHERE user.email = ?1")
-    int enableAppUser(String email);
+    void enableAppUser(String email);
 
     @Transactional
     @Modifying
