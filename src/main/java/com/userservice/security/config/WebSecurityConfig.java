@@ -1,6 +1,6 @@
 package com.userservice.security.config;
 
-import com.userservice.registration.RegistrationService;
+import com.userservice.service.registration.RegistrationService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

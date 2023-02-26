@@ -1,0 +1,14 @@
+logging:
+  level:
+    org.zalando.logbook: TRACE
+    org:
+      hibernate:
+        tool:
+          schema:
+            internal:
+              exec:
+                ExceptionHandlerLoggedImpl: ERROR
+        engine:
+          jdbc:
+            spi:
+              SqlExceptionHelper: ERROR

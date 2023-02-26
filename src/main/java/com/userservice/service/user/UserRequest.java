@@ -1,21 +1,24 @@
-package com.userservice.user;
+package com.userservice.service.user;
 
-import com.sun.istack.NotNull;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 @Builder
 public class UserRequest {
 
-    @NotNull
+    @NotBlank
     private String email;
 
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
@@ -33,6 +36,8 @@ public class UserRequest {
 
     @Size(min = 2, max = 35)
     private String lastName;
+
+    @Valid
     private boolean locked;
 
     public boolean getLocked() {

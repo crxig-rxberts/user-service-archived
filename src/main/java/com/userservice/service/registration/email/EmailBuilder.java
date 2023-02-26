@@ -1,4 +1,4 @@
-package com.userservice.registration.email;
+package com.userservice.service.registration.email;
 
 
 import org.springframework.context.annotation.Bean;
