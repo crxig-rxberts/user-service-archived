@@ -35,7 +35,8 @@ jobs:
           distribution: 'adopt'
 
       - name: Run Application Tests
-        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        run: docker run -p 1080:1080 -p 1025:1025 maildev/maildev ; mvn --batch-mode -Dmaven.test.failure.ignore=true test;
+
 
       - name: Report
         uses: dorny/test-reporter@v1
