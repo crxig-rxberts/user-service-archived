@@ -24,19 +24,16 @@ public class HttpServerRequestFilter extends OncePerRequestFilter {
 
         try {
 
-            log.info("Request Start - URI: {}, Method: {}", request.getRequestURI(), request.getMethod());
-
             MDC.put(X_CORRELATION_ID, Optional.ofNullable(request.getHeader(X_CORRELATION_ID))
                     .orElseGet(() -> UUID.randomUUID().toString()));
             response.setHeader(X_CORRELATION_ID, MDC.get(X_CORRELATION_ID));
 
+
             filterChain.doFilter(request, response);
 
         } finally {
-
-            log.info("Request End - URI: {}. Method: {}", request.getRequestURI(), request.getMethod());
-
             MDC.clear();
         }
     }
 }
+

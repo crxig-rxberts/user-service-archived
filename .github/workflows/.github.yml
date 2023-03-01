@@ -1,5 +1,5 @@
 on: push
-name: ...
+name: User Service Workflow
 jobs:
 
 
@@ -34,8 +34,11 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+      - name: Set up maildev
+        run: docker run -d -p 1080:1080 -p 1025:1025 maildev/maildev
+
       - name: Run Application Tests
-        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test;
 
       - name: Report
         uses: dorny/test-reporter@v1

@@ -1,4 +1,4 @@
-package com.userservice.registration.email;
+package com.userservice.service.registration.email;
 
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -22,17 +22,22 @@ public class EmailService implements EmailSender {
     @Override
     @Async
     public void send(String sendTo, String email) {
+
         try {
+
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
             helper.setText(email, true);
             helper.setTo(sendTo);
             helper.setSubject("Verify your email.");
-            helper.setFrom("craig26031996@gmail.com");
+            helper.setFrom("DoNotReply@userservice.com");
             mailSender.send(mimeMessage);
+
         } catch (MessagingException e) {
+
             LOGGER.error("Failed to send email", e);
             throw new IllegalStateException("Failed to send email");
+
         }
     }
 }

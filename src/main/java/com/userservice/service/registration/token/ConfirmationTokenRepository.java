@@ -1,4 +1,4 @@
-package com.userservice.registration.token;
+package com.userservice.service.registration.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,8 +15,4 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     Optional<ConfirmationToken> findByToken(String token);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE ConfirmationToken token SET token.confirmedAt = ?2 WHERE token.token = ?1")
-    int updateConfirmedAt(String token, LocalDateTime confirmedAt);
 }
