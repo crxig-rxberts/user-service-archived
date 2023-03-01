@@ -35,7 +35,7 @@ jobs:
           distribution: 'adopt'
 
       - name: Set up maildev
-        run: docker run -p 1080:1080 -p 1025:1025 maildev/maildev
+        run: docker run -d -p 1080:1080 -p 1025:1025 maildev/maildev
 
       - name: Run Application Tests
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test;
