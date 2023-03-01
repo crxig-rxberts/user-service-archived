@@ -38,10 +38,10 @@ public class UserController {
         try {
             UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() ->
                     new NotFoundException("No user exists in DB with given credentials. Correlation Id: " + MDC.get("x-correlation-id")));
-            return responseBuilder.buildResponse(null, userEntity);
+            return responseBuilder.buildResponse(userEntity);
         }
         catch (NotFoundException ex) {
-            return responseBuilder.buildResponse(ex, null);
+            return responseBuilder.buildResponse(ex);
         }
     }
 }

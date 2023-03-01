@@ -35,6 +35,7 @@ public class RegistrationService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ResponseBuilder responseBuilder;
 
+
     public ResponseEntity<Response> register(RegistrationRequest request) {
         try {
             RequestValidator.validateRequest(request);
@@ -44,10 +45,10 @@ public class RegistrationService implements UserDetailsService {
         }
         catch (ConstraintViolationException ex) {
             log.warn(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseBuilder.buildResponse(ex, null);
+            return responseBuilder.buildResponse(ex);
         }
         catch (ConflictException ex) {
-            return responseBuilder.buildResponse(ex, null);
+            return responseBuilder.buildResponse(ex);
         }
 
         ConfirmationToken confirmationToken = signUpUser(
@@ -60,10 +61,10 @@ public class RegistrationService implements UserDetailsService {
                         UserRole.USER
                 )
         );
-        String link = "https://localhost:8080/api/v1/registration/confirm?token=" + confirmationToken.getToken();
-        emailSender.send(request.getEmail(), EmailBuilder.buildEmail(request.getFirstName(), link));
+        String confirmationLink = "https://localhost:8080/api/v1/registration/confirm?token=" + confirmationToken.getToken();
+        emailSender.send(request.getEmail(), EmailBuilder.buildEmail(request.getFirstName(), confirmationLink));
 
-        return responseBuilder.buildResponse(null, confirmationToken.getUserEntity());
+        return responseBuilder.buildResponse(confirmationToken.getUserEntity());
     }
 
 

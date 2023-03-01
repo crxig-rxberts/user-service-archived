@@ -30,10 +30,10 @@ public class UserService {
         }
         catch (ConstraintViolationException ex) {
             log.error(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseBuilder.buildResponse(ex, null);
+            return responseBuilder.buildResponse(ex);
         }
         catch (NotFoundException ex) {
-            return responseBuilder.buildResponse(ex, null);
+            return responseBuilder.buildResponse(ex);
         }
 
 
@@ -57,6 +57,6 @@ public class UserService {
         }
         userRepository.save(userEntity);
 
-        return responseBuilder.buildResponse(null, userEntity);
+        return responseBuilder.buildResponse(userEntity);
     }
 }
