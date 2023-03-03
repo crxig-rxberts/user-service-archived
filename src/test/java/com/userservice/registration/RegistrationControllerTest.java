@@ -31,9 +31,9 @@ class RegistrationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private RegistrationRequest registrationRequest;
     @Autowired
     private UserRepository userRepository;
+    private RegistrationRequest registrationRequest;
 
     @Test
     @SneakyThrows

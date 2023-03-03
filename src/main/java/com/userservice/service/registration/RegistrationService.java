@@ -88,6 +88,6 @@ public class RegistrationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String displayName) throws UsernameNotFoundException {
-        return userRepository.findByDisplayName(displayName);
+        return null;
     }
 }

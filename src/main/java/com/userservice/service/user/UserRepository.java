@@ -16,9 +16,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Bean
     Optional<UserEntity> findByEmail(String email);
 
-    @Bean
-    UserDetails findByDisplayName(String displayName);
-
     @Transactional
     @Modifying
     @Query("UPDATE UserEntity user SET user.enabled = TRUE WHERE user.email = ?1")

@@ -1,12 +1,9 @@
 package com.userservice.service.response;
 
 import com.userservice.service.user.UserEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-@Slf4j
 
 @Component
 public class ResponseBuilder {
