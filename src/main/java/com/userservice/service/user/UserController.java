@@ -2,7 +2,8 @@ package com.userservice.service.user;
 
 import com.userservice.exception.NotFoundException;
 import com.userservice.service.response.Response;
-import com.userservice.service.response.ResponseBuilder;
+import com.userservice.service.response.ResponseMapper;
+import com.userservice.service.response.ResponseMapperEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -22,8 +23,9 @@ public class UserController {
 
     private UserRepository userRepository;
     private UserService userService;
-    private ResponseBuilder responseBuilder;
+    private ResponseMapper responseMapper;
 
+    // TODO: use service classes in controller
     @GetMapping
     public ResponseEntity<Response> getUserEntity(@RequestParam String email) throws NotFoundException {
         return checkUserExistsAndReturnUser(email);
@@ -38,10 +40,10 @@ public class UserController {
         try {
             UserEntity userEntity = userRepository.findByEmail(email).orElseThrow(() ->
                     new NotFoundException("No user exists in DB with given credentials. Correlation Id: " + MDC.get("x-correlation-id")));
-            return responseBuilder.buildResponse(userEntity);
+            return responseMapper.buildResponse(userEntity);
         }
         catch (NotFoundException ex) {
-            return responseBuilder.buildResponse(ex);
+            return responseMapper.buildResponse(ex);
         }
     }
 }

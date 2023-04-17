@@ -17,6 +17,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Getter
 @Setter
@@ -27,6 +28,7 @@ import javax.persistence.SequenceGenerator;
 @Builder
 @Entity
 @Component
+@Table(name = "app_user")
 public class UserEntity {
 
     @Id

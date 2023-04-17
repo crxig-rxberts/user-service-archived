@@ -1,6 +1,5 @@
 package com.userservice.service.response;
 
-import com.userservice.service.registration.token.ConfirmationToken;
 import com.userservice.service.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
