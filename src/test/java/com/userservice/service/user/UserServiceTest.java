@@ -1,4 +1,4 @@
-package com.userservice.user;
+package com.userservice.service.user;
 
 import com.userservice.exception.NotFoundException;
 import com.userservice.service.response.Response;

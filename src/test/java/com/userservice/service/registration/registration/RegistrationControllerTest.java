@@ -1,4 +1,4 @@
-package com.userservice.registration;
+package com.userservice.service.registration.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userservice.service.registration.RegistrationRequest;

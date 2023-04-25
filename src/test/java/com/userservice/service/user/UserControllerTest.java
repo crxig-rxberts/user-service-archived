@@ -1,4 +1,4 @@
-package com.userservice.user;
+package com.userservice.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userservice.service.user.UserEntity;

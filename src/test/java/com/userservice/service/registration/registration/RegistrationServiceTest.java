@@ -1,4 +1,4 @@
-package com.userservice.registration;
+package com.userservice.service.registration.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
