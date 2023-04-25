@@ -17,7 +17,7 @@ import java.util.UUID;
 @Component
 public class HttpServerRequestFilter extends OncePerRequestFilter {
 
-    public String X_CORRELATION_ID = "x-correlation-id";
+    private static final String X_CORRELATION_ID = "x-correlation-id";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

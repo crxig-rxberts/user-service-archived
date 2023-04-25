@@ -2,7 +2,7 @@ package com.userservice.service.user;
 
 import com.userservice.exception.NotFoundException;
 import com.userservice.service.response.Response;
-import com.userservice.service.response.ResponseBuilder;
+import com.userservice.service.response.ResponseMapper;
 import com.userservice.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import javax.validation.ConstraintViolationException;
 public class UserService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private ResponseBuilder responseBuilder;
+    private ResponseMapper responseMapper;
     private UserEntity userEntity;
 
     public ResponseEntity<Response> updateUserCredentials(UserRequest request) throws NotFoundException {
@@ -30,10 +30,10 @@ public class UserService {
         }
         catch (ConstraintViolationException ex) {
             log.error(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseBuilder.buildResponse(ex);
+            return responseMapper.buildResponse(ex);
         }
         catch (NotFoundException ex) {
-            return responseBuilder.buildResponse(ex);
+            return responseMapper.buildResponse(ex);
         }
 
 
@@ -57,6 +57,6 @@ public class UserService {
         }
         userRepository.save(userEntity);
 
-        return responseBuilder.buildResponse(userEntity);
+        return responseMapper.buildResponse(userEntity);
     }
 }

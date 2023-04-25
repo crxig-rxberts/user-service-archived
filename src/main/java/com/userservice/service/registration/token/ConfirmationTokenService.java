@@ -25,7 +25,7 @@ public class ConfirmationTokenService {
     @ResponseStatus
     public void confirmToken(String token) throws NotFoundException {
 
-        ConfirmationToken tokenEntity = confirmationTokenRepository.findByToken(token)
+        ConfirmationTokenEntity tokenEntity = confirmationTokenRepository.findByToken(token)
                 .orElseThrow(() -> new NotFoundException("Token not found. Correlation Id: " + MDC.get("x-correlation-id")));
 
         if (tokenEntity.getConfirmedAt() != null) {

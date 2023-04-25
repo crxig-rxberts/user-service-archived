@@ -1,11 +1,7 @@
-package com.userservice.registration;
+package com.userservice.service.registration.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userservice.service.registration.RegistrationRequest;
-import com.userservice.service.registration.RegistrationService;
-import com.userservice.service.registration.token.ConfirmationToken;
-import com.userservice.service.registration.token.ConfirmationTokenService;
-import com.userservice.service.user.UserEntity;
 import com.userservice.service.user.UserRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -15,8 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,9 +25,9 @@ class RegistrationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private RegistrationRequest registrationRequest;
     @Autowired
     private UserRepository userRepository;
+    private RegistrationRequest registrationRequest;
 
     @Test
     @SneakyThrows

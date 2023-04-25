@@ -1,12 +1,13 @@
 package com.userservice.service.registration;
 
 import com.userservice.exception.ConflictException;
+import com.userservice.service.registration.token.ConfirmationTokenEntity;
 import com.userservice.service.response.Response;
 import com.userservice.service.registration.email.EmailBuilder;
 import com.userservice.service.registration.email.EmailSender;
-import com.userservice.service.registration.token.ConfirmationToken;
 import com.userservice.service.registration.token.ConfirmationTokenRepository;
-import com.userservice.service.response.ResponseBuilder;
+import com.userservice.service.response.ResponseMapper;
+import com.userservice.service.response.ResponseMapperEnum;
 import com.userservice.service.user.UserEntity;
 import com.userservice.service.user.UserRepository;
 import com.userservice.service.user.UserRole;
@@ -33,8 +34,7 @@ public class RegistrationService implements UserDetailsService {
     private final EmailSender emailSender;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ResponseBuilder responseBuilder;
-
+    private final ResponseMapper responseMapper;
 
     public ResponseEntity<Response> register(RegistrationRequest request) {
         try {
@@ -45,13 +45,13 @@ public class RegistrationService implements UserDetailsService {
         }
         catch (ConstraintViolationException ex) {
             log.warn(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseBuilder.buildResponse(ex);
+            return responseMapper.buildResponse(ex);
         }
         catch (ConflictException ex) {
-            return responseBuilder.buildResponse(ex);
+            return responseMapper.buildResponse(ex);
         }
 
-        ConfirmationToken confirmationToken = signUpUser(
+        ConfirmationTokenEntity confirmationToken = signUpUser(
                 new UserEntity(
                         request.getFirstName(),
                         request.getLastName(),
@@ -64,17 +64,17 @@ public class RegistrationService implements UserDetailsService {
         String confirmationLink = "https://localhost:8080/api/v1/registration/confirm?token=" + confirmationToken.getToken();
         emailSender.send(request.getEmail(), EmailBuilder.buildEmail(request.getFirstName(), confirmationLink));
 
-        return responseBuilder.buildResponse(confirmationToken.getUserEntity());
+        return responseMapper.buildResponse(confirmationToken.getUserEntity());
     }
 
 
 
-    public ConfirmationToken signUpUser(UserEntity userEntity) {
+    public ConfirmationTokenEntity signUpUser(UserEntity userEntity) {
 
         userRepository.save(userEntity);
         log.info("User successfully saved to DB. Correlation Id: " + MDC.get("x-correlation-id"));
 
-        ConfirmationToken confirmationToken = new ConfirmationToken(
+        ConfirmationTokenEntity confirmationToken = new ConfirmationTokenEntity(
                 UUID.randomUUID().toString(),
                 LocalDateTime.now(),
                 LocalDateTime.now().plusMinutes(30),
@@ -88,6 +88,6 @@ public class RegistrationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String displayName) throws UsernameNotFoundException {
-        return userRepository.findByDisplayName(displayName);
+        return null;
     }
 }

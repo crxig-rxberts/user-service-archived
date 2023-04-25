@@ -1,18 +1,16 @@
 package com.userservice.service.response;
 
 import com.userservice.service.user.UserEntity;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-@Slf4j
-
 @Component
-public class ResponseBuilder {
+public class ResponseMapper {
+    // TODO use an enum here that can map responses
+    private static final String CONFLICT_MSG = "User already exists in DB.";
+    private static final String NOT_FOUND_MSG = "No user exists in DB with given credentials.";
 
-    private final String CONFLICT_MSG = "User already exists in DB.";
-    private final String NOT_FOUND_MSG = "No entity exists in DB with given credentials.";
     public ResponseEntity<Response> buildResponse(RuntimeException exception) {
         Response response = new Response();
 
@@ -39,6 +37,7 @@ public class ResponseBuilder {
             }
         }
     }
+
 
     public ResponseEntity<Response> buildResponse(UserEntity userEntity) {
         Response response = new Response();

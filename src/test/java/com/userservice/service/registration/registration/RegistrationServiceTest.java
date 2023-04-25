@@ -1,4 +1,4 @@
-package com.userservice.registration;
+package com.userservice.service.registration.registration;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -16,7 +16,7 @@ import com.userservice.service.registration.RegistrationService;
 import com.userservice.service.registration.email.EmailSender;
 
 import com.userservice.service.registration.token.ConfirmationTokenRepository;
-import com.userservice.service.response.ResponseBuilder;
+import com.userservice.service.response.ResponseMapper;
 import com.userservice.service.response.ResponseStatus;
 import com.userservice.service.user.UserEntity;
 import com.userservice.service.user.UserRepository;
@@ -49,7 +49,7 @@ class RegistrationServiceTest {
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
-    private ResponseBuilder responseBuilder;
+    private ResponseMapper responseMapper;
     @InjectMocks
     private RegistrationService registrationService;
 
@@ -73,7 +73,7 @@ class RegistrationServiceTest {
         UserEntity userEntity = new UserEntity("John", "Doe", "JohnDoe", "johndoe@example.com", "password", UserRole.USER);
         when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
         when(bCryptPasswordEncoder.encode(any())).thenReturn("password");
-        when(responseBuilder.buildResponse(any(UserEntity.class)))
+        when(responseMapper.buildResponse(any(UserEntity.class)))
                 .thenReturn(ResponseEntity.ok(new Response(ResponseStatus.SUCCESS, null, userEntity)));
 
         ResponseEntity<Response> response = registrationService.register(registrationRequest);
@@ -95,7 +95,7 @@ class RegistrationServiceTest {
     void register_when_emailAlreadyExists_then_expectBadRequest() {
         UserEntity existingUser = new UserEntity("John", "Doe", "johndoe", "johndoe@example.com", "password", UserRole.USER);
         when(userRepository.findByEmail(any())).thenReturn(Optional.of(existingUser));
-        when(responseBuilder.buildResponse(any(ConflictException.class)))
+        when(responseMapper.buildResponse(any(ConflictException.class)))
                 .thenReturn(ResponseEntity.status(HttpStatus.CONFLICT).body(new Response(ResponseStatus.CONFLICT, "User already exists in DB.",  null)));
 
         ResponseEntity<Response> response = registrationService.register(registrationRequest);
@@ -120,7 +120,7 @@ class RegistrationServiceTest {
                         .email("invalid_email_address")
                         .password("P$ssword123")
                         .build();
-        when(responseBuilder.buildResponse(any(ConstraintViolationException.class)))
+        when(responseMapper.buildResponse(any(ConstraintViolationException.class)))
                 .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(ResponseStatus.BAD_REQUEST, "Email must be a well-formed email address", null)));
 
         ResponseEntity<Response> response = registrationService.register(invalidRequest);
