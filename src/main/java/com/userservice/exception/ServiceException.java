@@ -8,8 +8,7 @@ public class ServiceException extends RuntimeException {
 
     private final String logMsg;
     
-    public ServiceException(final String logMsg) {
+    public ServiceException(String logMsg) {
         this.logMsg = logMsg;
-        log.warn(this.getClass().getSimpleName() + " raised, LogMsg: {}", logMsg);
     }
 }

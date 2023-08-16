@@ -1,4 +1,4 @@
-package com.userservice.service.registration.registration.email;
+package com.userservice.service.registration.email;
 
 import com.userservice.service.registration.email.EmailService;
 import lombok.SneakyThrows;

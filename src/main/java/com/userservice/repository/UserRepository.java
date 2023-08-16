@@ -1,9 +1,8 @@
-package com.userservice.service.user;
+package com.userservice.repository;
 
+import com.userservice.model.entity.UserEntity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +13,9 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Bean
-    Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findUserByEmail(String email);
+
+    UserDetails findByEmail(String email);
+
 
 }

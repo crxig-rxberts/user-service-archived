@@ -1,8 +1,8 @@
-package com.userservice.service.registration.registration;
+package com.userservice.service.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.userservice.service.registration.RegistrationRequest;
-import com.userservice.service.user.UserRepository;
+import com.userservice.model.request.RegistrationRequest;
+import com.userservice.repository.UserRepository;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ class RegistrationControllerTest {
     void registerValidRequestReturnsOkResponseAndRegistersUser() {
         registrationRequest = new RegistrationRequest("John", "Doe", "JohnDoe", "P$ssWord123", "jdoe@test.com");
 
-        mockMvc.perform(post("/api/v1/registration")
+        mockMvc.perform(post("/api/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isOk())
@@ -42,14 +42,14 @@ class RegistrationControllerTest {
                 .andExpect(jsonPath("$.errorMessage").doesNotExist())
                 .andExpect(jsonPath("$.userEntity").exists());
 
-        assertTrue(userRepository.findByEmail(registrationRequest.getEmail()).isPresent());
+        assertTrue(userRepository.findUserByEmail(registrationRequest.getEmail()).isPresent());
     }
 
     @Test
     @SneakyThrows
     void registerInvalidRequestReturnsBadRequest() {
         registrationRequest = new RegistrationRequest();
-        mockMvc.perform(post("/api/v1/registration")
+        mockMvc.perform(post("/api/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isBadRequest())
@@ -57,14 +57,14 @@ class RegistrationControllerTest {
                 .andExpect(jsonPath("$.errorMessage").exists())
                 .andExpect(jsonPath("$.userEntity").doesNotExist());
 
-        assertFalse(userRepository.findByEmail(registrationRequest.getEmail()).isPresent());
+        assertFalse(userRepository.findUserByEmail(registrationRequest.getEmail()).isPresent());
     }
 
     @Test
     @SneakyThrows
     void registerRequestForExistingUserReturnsConflict() {
         registrationRequest = new RegistrationRequest("John", "Doe", "JohnDoe", "P$ssWord123", "jdoe@test.com");
-        mockMvc.perform(post("/api/v1/registration")
+        mockMvc.perform(post("/api/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isConflict())
@@ -72,6 +72,6 @@ class RegistrationControllerTest {
                 .andExpect(jsonPath("$.errorMessage").exists())
                 .andExpect(jsonPath("$.userEntity").doesNotExist());
 
-        assertTrue(userRepository.findByEmail(registrationRequest.getEmail()).isPresent());
+        assertTrue(userRepository.findUserByEmail(registrationRequest.getEmail()).isPresent());
     }
 }

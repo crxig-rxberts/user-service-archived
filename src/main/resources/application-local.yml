@@ -35,3 +35,9 @@ spring:
           connectiontimeout: 5000
           timeout: 3000
           writetimeout: 5000
+
+jwt:
+  secret: test-pass
+  expiration: 100000000
+  refresh:
+    expiration: 1000000000

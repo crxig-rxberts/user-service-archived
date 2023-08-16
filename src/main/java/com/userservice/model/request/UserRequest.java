@@ -1,4 +1,4 @@
-package com.userservice.service.user;
+package com.userservice.model.request;
 
 
 import lombok.*;
@@ -12,7 +12,6 @@ import javax.validation.constraints.Size;
 @Setter
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode
 @ToString
 @Builder
@@ -25,7 +24,7 @@ public class UserRequest {
             message = "Password must contain at least 8 characters, including one lowercase letter, one uppercase letter, one number, and one special character")
     private String password;
 
-    @Size(min = 4, max = 12)
+    @Size(min = 4, max = 18)
     private String displayName;
 
     @Email

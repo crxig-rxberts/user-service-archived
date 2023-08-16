@@ -1,42 +1,60 @@
 package com.userservice.service.user;
 
 import com.userservice.exception.NotFoundException;
-import com.userservice.service.response.Response;
-import com.userservice.service.response.ResponseMapper;
-import com.userservice.validator.RequestValidator;
+import com.userservice.exception.UnauthorizedException;
+import com.userservice.model.request.LoginRequest;
+import com.userservice.model.entity.UserEntity;
+import com.userservice.model.request.RefreshRequest;
+import com.userservice.model.request.UserRequest;
+import com.userservice.model.response.LoginResponse;
+import com.userservice.model.response.RefreshResponse;
+import com.userservice.model.response.UserResponse;
+import com.userservice.repository.UserRepository;
+import com.userservice.security.jwt.JwtTokenUtil;
+import com.userservice.model.response.mapper.ResponseMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.validation.ConstraintViolationException;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
     private UserRepository userRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private JwtTokenUtil jwtTokenUtil;
     private ResponseMapper responseMapper;
-    private UserEntity userEntity;
 
-    public ResponseEntity<Response> updateUserCredentials(UserRequest request) throws NotFoundException {
-        try {
-            RequestValidator.validateRequest(request);
-            userEntity = userRepository.findByEmail(request.getEmail()).orElseThrow(() ->
-                    new NotFoundException("No user exists in DB with given credentials. Correlation Id: " + MDC.get("x-correlation-id")));
-        }
-        catch (ConstraintViolationException ex) {
-            log.error(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseMapper.buildResponse(ex);
-        }
-        catch (NotFoundException ex) {
-            return responseMapper.buildResponse(ex);
+    public ResponseEntity<UserResponse> returnUser(String email) {
+        return responseMapper.buildUserResponse(getUserOrElseThrow(email));
+    }
+
+    public ResponseEntity<UserResponse> updateUserCredentials(UserRequest request) throws NotFoundException {
+        UserEntity userEntity = updateEntity(getUserOrElseThrow(request.getEmail()), request);
+        return responseMapper.buildUserResponse(userEntity);
+    }
+
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        getUserOrElseThrow(loginRequest.getEmail());
+        UserDetails userDetails = userRepository.findByEmail(loginRequest.getEmail());
+        if (!bCryptPasswordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
+            throw new UnauthorizedException("Passwords do not match.");
         }
 
+        return ResponseEntity.ok(new LoginResponse(jwtTokenUtil.generateToken(userDetails), "refreshToken"));
+    }
 
+//    public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest refreshRequest) {
+//
+//    }
+
+    private UserEntity updateEntity(UserEntity userEntity, UserRequest request) {
         if (request.getPassword() != null) {
             userEntity.setPassword(bCryptPasswordEncoder.encode(request.getPassword()));
         }
@@ -55,8 +73,17 @@ public class UserService {
         if (request.getLocked()) {
             userEntity.setLocked(true);
         }
-        userRepository.save(userEntity);
+        return userRepository.save(userEntity);
+    }
 
-        return responseMapper.buildResponse(userEntity);
+    private UserEntity getUserOrElseThrow(String email) {
+        return userRepository.findUserByEmail(email).orElseThrow(() ->
+                new NotFoundException("No user exists in DB with given credentials."));
+
+    }
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findUserByEmail(email).orElseThrow(() ->
+                new UsernameNotFoundException("No user exists in DB with given credentials."));
     }
 }
