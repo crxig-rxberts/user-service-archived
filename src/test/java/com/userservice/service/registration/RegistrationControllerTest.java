@@ -34,7 +34,7 @@ class RegistrationControllerTest {
     void registerValidRequestReturnsOkResponseAndRegistersUser() {
         registrationRequest = new RegistrationRequest("John", "Doe", "JohnDoe", "P$ssWord123", "jdoe@test.com");
 
-        mockMvc.perform(post("/api/registration")
+        mockMvc.perform(post("/api/public/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isOk())
@@ -49,7 +49,7 @@ class RegistrationControllerTest {
     @SneakyThrows
     void registerInvalidRequestReturnsBadRequest() {
         registrationRequest = new RegistrationRequest();
-        mockMvc.perform(post("/api/registration")
+        mockMvc.perform(post("/api/public/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isBadRequest())
@@ -64,7 +64,7 @@ class RegistrationControllerTest {
     @SneakyThrows
     void registerRequestForExistingUserReturnsConflict() {
         registrationRequest = new RegistrationRequest("John", "Doe", "JohnDoe", "P$ssWord123", "jdoe@test.com");
-        mockMvc.perform(post("/api/registration")
+        mockMvc.perform(post("/api/public/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(registrationRequest)))
                 .andExpect(status().isConflict())
