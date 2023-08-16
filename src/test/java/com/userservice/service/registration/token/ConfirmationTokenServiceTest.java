@@ -1,13 +1,12 @@
-package com.userservice.service.registration.registration.token;
+package com.userservice.service.registration.token;
 
 import com.userservice.exception.NotFoundException;
 import com.userservice.exception.ConflictException;
-import com.userservice.service.registration.token.ConfirmationTokenEntity;
-import com.userservice.service.registration.token.ConfirmationTokenRepository;
-import com.userservice.service.registration.token.ConfirmationTokenService;
-import com.userservice.service.user.UserEntity;
-import com.userservice.service.user.UserRepository;
-import com.userservice.service.user.UserRole;
+import com.userservice.model.entity.ConfirmationTokenEntity;
+import com.userservice.model.entity.UserEntity;
+import com.userservice.repository.ConfirmationTokenRepository;
+import com.userservice.repository.UserRepository;
+import com.userservice.model.entity.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

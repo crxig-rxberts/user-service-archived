@@ -1,56 +1,43 @@
 package com.userservice.service.registration;
 
 import com.userservice.exception.ConflictException;
-import com.userservice.service.registration.token.ConfirmationTokenEntity;
-import com.userservice.service.response.Response;
+import com.userservice.model.request.RegistrationRequest;
+import com.userservice.model.response.UserResponse;
+import com.userservice.model.entity.ConfirmationTokenEntity;
 import com.userservice.service.registration.email.EmailBuilder;
 import com.userservice.service.registration.email.EmailSender;
-import com.userservice.service.registration.token.ConfirmationTokenRepository;
-import com.userservice.service.response.ResponseMapper;
-import com.userservice.service.response.ResponseMapperEnum;
-import com.userservice.service.user.UserEntity;
-import com.userservice.service.user.UserRepository;
-import com.userservice.service.user.UserRole;
+import com.userservice.repository.ConfirmationTokenRepository;
+import com.userservice.model.response.mapper.ResponseMapper;
+import com.userservice.model.entity.UserEntity;
+import com.userservice.repository.UserRepository;
+import com.userservice.model.entity.UserRole;
 import com.userservice.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 @Slf4j
-public class RegistrationService implements UserDetailsService {
+public class RegistrationService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSender emailSender;
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ResponseMapper responseMapper;
 
-    public ResponseEntity<Response> register(RegistrationRequest request) {
-        try {
-            RequestValidator.validateRequest(request);
-            userRepository.findByEmail(request.getEmail()).ifPresent(userEntity -> {
-                        throw new ConflictException(String.format("User already exists in DB. CorrelationId: %s", MDC.get("x-correlation-id")));
-                    });
-        }
-        catch (ConstraintViolationException ex) {
-            log.warn(ex.getClass().getSimpleName() + " raised. Correlation Id: " + MDC.get("x-correlation-id"));
-            return responseMapper.buildResponse(ex);
-        }
-        catch (ConflictException ex) {
-            return responseMapper.buildResponse(ex);
-        }
+    public ResponseEntity<UserResponse> register(RegistrationRequest request) {
 
+        RequestValidator.validateRequest(request);
+
+        userRepository.findUserByEmail(request.getEmail()).ifPresent(userEntity -> {
+            throw new ConflictException("User already exists in DB.");
+        });
         ConfirmationTokenEntity confirmationToken = signUpUser(
                 new UserEntity(
                         request.getFirstName(),
@@ -61,18 +48,16 @@ public class RegistrationService implements UserDetailsService {
                         UserRole.USER
                 )
         );
-        String confirmationLink = "https://localhost:8080/api/v1/registration/confirm?token=" + confirmationToken.getToken();
+        String confirmationLink = "https://localhost:8080/api/registration/confirm?token=" + confirmationToken.getToken();
         emailSender.send(request.getEmail(), EmailBuilder.buildEmail(request.getFirstName(), confirmationLink));
 
-        return responseMapper.buildResponse(confirmationToken.getUserEntity());
+        return responseMapper.buildUserResponse(confirmationToken.getUserEntity());
     }
-
-
 
     public ConfirmationTokenEntity signUpUser(UserEntity userEntity) {
 
         userRepository.save(userEntity);
-        log.info("User successfully saved to DB. Correlation Id: " + MDC.get("x-correlation-id"));
+        log.info("User successfully saved to DB.");
 
         ConfirmationTokenEntity confirmationToken = new ConfirmationTokenEntity(
                 UUID.randomUUID().toString(),
@@ -81,13 +66,8 @@ public class RegistrationService implements UserDetailsService {
                 userEntity
         );
         confirmationTokenRepository.save(confirmationToken);
-        log.info(String.format("Confirmation token successfully saved to DB. Token: %s Correlation Id: %s", confirmationToken.getToken(), MDC.get("x-correlation-id")));
+        log.info(String.format("Confirmation token successfully saved to DB. Token: %s ", confirmationToken.getToken()));
 
         return confirmationToken;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String displayName) throws UsernameNotFoundException {
-        return null;
     }
 }

@@ -1,14 +1,15 @@
 package com.userservice.service.user;
 
 import com.userservice.exception.NotFoundException;
-import com.userservice.service.response.Response;
-import com.userservice.service.response.ResponseMapper;
-import com.userservice.service.response.ResponseStatus;
-import com.userservice.service.user.UserEntity;
-import com.userservice.service.user.UserRepository;
-import com.userservice.service.user.UserRequest;
-import com.userservice.service.user.UserRole;
-import com.userservice.service.user.UserService;
+import com.userservice.exception.UnauthorizedException;
+import com.userservice.model.request.LoginRequest;
+import com.userservice.model.entity.UserEntity;
+import com.userservice.model.response.LoginResponse;
+import com.userservice.model.response.RefreshResponse;
+import com.userservice.model.response.mapper.ResponseMapper;
+import com.userservice.model.request.UserRequest;
+import com.userservice.repository.UserRepository;
+import com.userservice.security.jwt.JwtTokenUtil;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,15 +17,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.validation.ConstraintViolationException;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -33,82 +34,124 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
+    private static final String VALID_EMAIL = "johndoe@example.com";
+    private static final String VALID_PASSWORD = "Password";
+    private static final String VALID_DISPLAY_NAME = "JohnDoe";
+    private static final String VALID_NEW_EMAIL = "new@example.com";
+    private static final String INVALID_PASSWORD = "ABC";
+    private static final String FIRST_NAME = "John";
+    private static final String LAST_NAME = "Doe";
+    private static final String HASHED_PASSWORD = "hashedPassword";
+
     @Mock
     private ResponseMapper responseMapper;
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private LoginRequest loginRequest;
+    @Mock
+    private UserDetails userDetails;
+    @Mock
+    private JwtTokenUtil jwtTokenUtil;
+    @Mock
+    private UserRequest userRequest;
+    @Mock
+    private UserEntity userEntity;
     @InjectMocks
     private UserService userService;
-    private UserRequest userRequest;
-    private UserEntity userEntity;
 
     @BeforeEach
     void setUp() {
-        userRequest = UserRequest.builder()
-                .email("johndoe@example.com")
-                .password("P$ssWrd123!")
-                .displayName("JohnDoe")
-                .newEmail("newjohndoe@example.com")
-                .firstName("John")
-                .lastName("Doe")
-                .locked(true)
-                .build();
-        userEntity = new UserEntity("John", "Doe", "johndoe", "johndoe@example.com", "password", UserRole.USER);
     }
 
     @Test
     @SneakyThrows
     void updateUserCredentials_when_userExists_then_expectValidBehaviour() {
-        when(userRepository.findByEmail(any())).thenReturn(Optional.of(userEntity));
-        when(bCryptPasswordEncoder.encode(any())).thenReturn("encodedPassword");
+        when(userRepository.findUserByEmail(any())).thenReturn(Optional.of(userEntity));
+        when(bCryptPasswordEncoder.encode(any())).thenReturn(HASHED_PASSWORD);
         when(userRepository.save(any())).thenReturn(userEntity);
-        when(responseMapper.buildResponse(any(UserEntity.class)))
-                .thenReturn(ResponseEntity.ok(new Response(ResponseStatus.SUCCESS, null, userEntity)));
 
+        when(userRequest.getEmail()).thenReturn(VALID_EMAIL);
+        when(userRequest.getPassword()).thenReturn(VALID_PASSWORD);
+        when(userRequest.getDisplayName()).thenReturn(VALID_DISPLAY_NAME);
+        when(userRequest.getNewEmail()).thenReturn(VALID_NEW_EMAIL);
+        when(userRequest.getFirstName()).thenReturn(FIRST_NAME);
+        when(userRequest.getLastName()).thenReturn(LAST_NAME);
+        when(userRequest.getLocked()).thenReturn(true);
 
-        ResponseEntity<Response> response = userService.updateUserCredentials(userRequest);
+        userService.updateUserCredentials(userRequest);
 
-        verify(userRepository, times(1)).findByEmail(any());
-        verify(bCryptPasswordEncoder, times(1)).encode(any());
-        verify(userRepository, times(1)).save(any());
-        assertNull(Objects.requireNonNull(response.getBody()).getErrorMessage());
-        assertEquals(ResponseStatus.SUCCESS, response.getBody().getStatus());
-        assertEquals(userEntity, response.getBody().getUserEntity());
+        verify(userRepository, times(1)).findUserByEmail(userRequest.getEmail());
+        verify(bCryptPasswordEncoder, times(1)).encode(userRequest.getPassword());
+        verify(userEntity, times(1)).setEmail(VALID_NEW_EMAIL);
+        verify(userEntity, times(1)).setPassword(HASHED_PASSWORD);
+        verify(userEntity, times(1)).setDisplayName(VALID_DISPLAY_NAME);
+        verify(userEntity, times(1)).setFirstName(FIRST_NAME);
+        verify(userEntity, times(1)).setLastName(LAST_NAME);
+        verify(userEntity, times(1)).setLocked(true);
+        verify(userRepository, times(1)).save(userEntity);
     }
+
 
     @Test
     @SneakyThrows
     void updateUserCredentials_when_userNotFound_then_expectNotFoundException() {
-        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
-        when(responseMapper.buildResponse(any(NotFoundException.class)))
-                .thenReturn(ResponseEntity.status(HttpStatus.NOT_FOUND).body(new Response(ResponseStatus.NOT_FOUND, "No user exists in DB with given credentials.", null)));
+        when(userRepository.findUserByEmail(any())).thenReturn(Optional.empty());
+        when(userRequest.getEmail()).thenReturn(VALID_EMAIL);
 
-        ResponseEntity<Response> response = userService.updateUserCredentials(userRequest);
+        assertThrows(NotFoundException.class, () -> userService.updateUserCredentials(userRequest));
 
-        verify(userRepository, times(1)).findByEmail(any());
+        verify(userRepository, times(1)).findUserByEmail(any());
         verify(bCryptPasswordEncoder, never()).encode(any());
         verify(userRepository, never()).save(any());
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("No user exists in DB with given credentials.", Objects.requireNonNull(response.getBody()).getErrorMessage());
-        assertNull(response.getBody().getUserEntity());
     }
 
     @Test
-    @SneakyThrows
-    void updateUserCredentials_when_requestIsInvalid_then_expectConstraintViolationResponse() {
-        UserRequest invalidRequest = UserRequest.builder().email("johndoe@example.com").newEmail("invalidEmail").build();
-        when(responseMapper.buildResponse(any(ConstraintViolationException.class)))
-                .thenReturn(ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new Response(ResponseStatus.BAD_REQUEST, "Email must be a well-formed email address", null)));
+    void login_when_userExistsAndPasswordMatches_then_returnsJwt() {
+        when(loginRequest.getEmail()).thenReturn(VALID_EMAIL);
+        when(userDetails.getPassword()).thenReturn(HASHED_PASSWORD);
+        when(loginRequest.getPassword()).thenReturn(VALID_PASSWORD);
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(userDetails);
+        when(userRepository.findUserByEmail(loginRequest.getEmail())).thenReturn(Optional.of(userEntity));
+        when(bCryptPasswordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())).thenReturn(true);
+        when(jwtTokenUtil.generateToken(userDetails)).thenReturn("generatedJwtToken");
 
-        ResponseEntity<Response> response = userService.updateUserCredentials(invalidRequest);
+        ResponseEntity<LoginResponse> response = userService.login(loginRequest);
 
-        verify(userRepository, never()).findByEmail(any());
-        verify(bCryptPasswordEncoder, never()).encode(any());
-        verify(userRepository, never()).save(any());
-        assertEquals(ResponseStatus.BAD_REQUEST, Objects.requireNonNull(response.getBody()).getStatus());
-        assertTrue(response.getBody().getErrorMessage().contains("must be a well-formed email address"));
-        assertNull(response.getBody().getUserEntity());
+        assertEquals("generatedJwtToken", Objects.requireNonNull(response.getBody()).getRefreshToken());
+        verify(userRepository, times(1)).findUserByEmail(loginRequest.getEmail());
+        verify(bCryptPasswordEncoder, times(1)).matches(loginRequest.getPassword(), userDetails.getPassword());
+        verify(jwtTokenUtil, times(1)).generateToken(userDetails);
     }
+
+    @Test
+    void login_when_userExistsAndPasswordNotMatch_then_throwsUnauthorizedException() {
+        when(userDetails.getPassword()).thenReturn(HASHED_PASSWORD);
+        when(loginRequest.getEmail()).thenReturn(VALID_EMAIL);
+        when(loginRequest.getPassword()).thenReturn(INVALID_PASSWORD);
+        when(userRepository.findUserByEmail(any())).thenReturn(Optional.of(userEntity));
+        when(userRepository.findByEmail(loginRequest.getEmail())).thenReturn(userDetails);
+        when(bCryptPasswordEncoder.matches(any(), any())).thenReturn(false);
+
+        assertThrows(UnauthorizedException.class, () -> userService.login(loginRequest));
+
+        verify(userRepository, times(1)).findUserByEmail(loginRequest.getEmail());
+        verify(bCryptPasswordEncoder, times(1)).matches(loginRequest.getPassword(), userDetails.getPassword());
+        verify(jwtTokenUtil, never()).generateToken(any());
+    }
+
+    @Test
+    void login_when_userNotFound_then_throwsNotFoundException() {
+        when(userRepository.findUserByEmail(any())).thenReturn(Optional.empty());
+        when(loginRequest.getEmail()).thenReturn(VALID_EMAIL);
+
+        assertThrows(NotFoundException.class, () -> userService.login(loginRequest));
+
+        verify(userRepository, times(1)).findUserByEmail(loginRequest.getEmail());
+        verify(bCryptPasswordEncoder, never()).matches(any(), any());
+        verify(jwtTokenUtil, never()).generateToken(any());
+    }
+
 }

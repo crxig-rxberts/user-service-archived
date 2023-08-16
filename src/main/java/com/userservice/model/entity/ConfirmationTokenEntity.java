@@ -1,6 +1,5 @@
-package com.userservice.service.registration.token;
+package com.userservice.model.entity;
 
-import com.userservice.service.user.UserEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

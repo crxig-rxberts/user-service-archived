@@ -2,7 +2,9 @@ package com.userservice.service.registration.token;
 
 import com.userservice.exception.NotFoundException;
 import com.userservice.exception.ConflictException;
-import com.userservice.service.user.UserRepository;
+import com.userservice.model.entity.ConfirmationTokenEntity;
+import com.userservice.repository.ConfirmationTokenRepository;
+import com.userservice.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -17,24 +19,28 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ConfirmationTokenService {
 
-    private UserRepository userRepository;
+    private static final String NOT_FOUND_ERROR_MESSAGE = "ConfirmationToken does not exist.";
+    private static final String CONFIRMED_ERROR_MESSAGE = "ConfirmationToken already confirmed.";
+    private static final String EXPIRED_ERROR_MESSAGE = "ConfirmationToken Expired";
 
-    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private UserRepository userRepository;
+    private ConfirmationTokenRepository confirmationTokenRepository;
 
     @Transactional
     @ResponseStatus
-    public void confirmToken(String token) throws NotFoundException {
+    public void confirmToken(String token) throws SecurityException {
 
         ConfirmationTokenEntity tokenEntity = confirmationTokenRepository.findByToken(token)
-                .orElseThrow(() -> new NotFoundException("Token not found. Correlation Id: " + MDC.get("x-correlation-id")));
+                .orElseThrow(() -> new NotFoundException(NOT_FOUND_ERROR_MESSAGE));
 
+        //TODO: Make new exceptions
         if (tokenEntity.getConfirmedAt() != null) {
-            throw new ConflictException("Token already confirmed. Correlation Id: " + MDC.get("x-correlation-id"));
+            throw new ConflictException(CONFIRMED_ERROR_MESSAGE);
         }
 
         if (tokenEntity.getExpiresAt().isBefore(LocalDateTime.now())) {
             userRepository.delete(tokenEntity.getUserEntity());
-            throw new ConflictException("Token Expired. Correlation Id: " + MDC.get("x-correlation-id"));
+            throw new ConflictException(EXPIRED_ERROR_MESSAGE);
         }
 
         tokenEntity.setConfirmedAt(LocalDateTime.now());

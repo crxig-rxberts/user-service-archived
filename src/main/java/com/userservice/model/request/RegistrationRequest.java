@@ -1,4 +1,4 @@
-package com.userservice.service.registration;
+package com.userservice.model.request;
 
 
 import lombok.*;

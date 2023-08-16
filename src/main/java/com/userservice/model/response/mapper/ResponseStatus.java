@@ -1,6 +1,8 @@
-package com.userservice.service.response;
+package com.userservice.model.response.mapper;
 
 public enum ResponseStatus {
+
+    UNAUTHORIZED,
     BAD_REQUEST,
     CONFLICT,
     NOT_FOUND,

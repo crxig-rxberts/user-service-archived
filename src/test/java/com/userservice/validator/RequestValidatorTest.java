@@ -1,6 +1,6 @@
 package com.userservice.validator;
 
-import com.userservice.service.registration.RegistrationRequest;
+import com.userservice.model.request.RegistrationRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

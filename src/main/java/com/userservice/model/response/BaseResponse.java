@@ -1,6 +1,6 @@
-package com.userservice.service.response;
+package com.userservice.model.response;
 
-import com.userservice.service.user.UserEntity;
+import com.userservice.model.response.mapper.ResponseStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,10 +15,9 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @Setter
 @Component
-public class Response {
+public class BaseResponse {
 
     private ResponseStatus status;
     private String errorMessage;
-    private UserEntity userEntity;
 
 }
