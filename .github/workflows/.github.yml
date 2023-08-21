@@ -63,6 +63,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Change directory (if needed)
+        run: cd .deploy
+
       - name: Install Ansible
         run: sudo apt-get update && sudo apt-get install -y ansible
 
@@ -89,7 +92,7 @@ jobs:
         run: terraform apply -auto-approve
 
       - name: Run script to set environment variables
-        run: bash .deploy/update-properties.sh
+        run: bash update-properties.sh
 
       - name: Run Ansible playbook
         run: ansible-playbook playbook.yml -i localhost, -e "target_ip=$EC2_IP"
