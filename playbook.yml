@@ -7,23 +7,18 @@
     app_name: user-service
     jar_location: ./target/user-service.jar
     deploy_location: ./opt/app/{{ app_name }}
-
   tasks:
     - name: Update package list and install Java
       apt:
         name: openjdk-17-jre
         update_cache: yes
-
     - name: Create deployment directory
       file:
         path: "{{ deploy_location }}"
         state: directory
-
     - name: Copy JAR file to EC2
       copy:
         src: "{{ jar_location }}"
         dest: "{{ deploy_location }}/{{ app_name }}.jar"
-
     - name: Start Spring Boot Application
       shell: nohup java -jar {{ deploy_location }}/{{ app_name }}.jar > /dev/null 2>&1 &
-E
