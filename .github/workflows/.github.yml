@@ -63,7 +63,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Change directory (if needed)
+      - name: Change directory .deploy/
         run: cd .deploy
 
       - name: Install Ansible
