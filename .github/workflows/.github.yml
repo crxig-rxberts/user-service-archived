@@ -82,7 +82,7 @@ jobs:
         uses: hashicorp/setup-terraform@v1
 
       - name: Create keypair for EC2
-        run: ssh-keygen -t rsa -b 4096 -f .ssh/deployer-key
+        run: ssh-keygen -t rsa -b 4096 -f ~/.ssh/deployer-key
 
       - name: Terraform Init
         working-directory: .deploy

@@ -26,3 +26,4 @@
 
     - name: Start Spring Boot Application
       shell: nohup java -jar {{ deploy_location }}/{{ app_name }}.jar > /dev/null 2>&1 &
+E
