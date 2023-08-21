@@ -74,7 +74,6 @@ jobs:
           path: ./target
 
       - name: Set up Terraform
-        working-directory: .deploy
         uses: hashicorp/setup-terraform@v1
 
       - name: Create keypair for EC2
