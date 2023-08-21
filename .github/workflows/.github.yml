@@ -1,4 +1,4 @@
-name: User Service Workflow & Deploy to AWS
+name: User Service CI/CD
 
 on:
   push:
@@ -63,9 +63,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Change directory .deploy/
-        run: cd .deploy
-
       - name: Install Ansible
         run: sudo apt-get update && sudo apt-get install -y ansible
 
@@ -77,21 +74,26 @@ jobs:
           path: ./target
 
       - name: Set up Terraform
+        working-directory: .deploy
         uses: hashicorp/setup-terraform@v1
 
       - name: Create keypair for EC2
         run: ssh-keygen -t rsa -b 4096 -f ~/.ssh/deployer-key
 
       - name: Terraform Init
+        working-directory: .deploy
         run: terraform init
 
       - name: Terraform Plan
+        working-directory: .deploy
         run: terraform plan
 
       - name: Terraform Apply
+        working-directory: .deploy
         run: terraform apply -auto-approve
 
       - name: Run script to set environment variables
+        working-directory: .deploy
         run: bash update-properties.sh
 
       - name: Run Ansible playbook
