@@ -5,7 +5,7 @@ provider "aws" {
 // Create a new key pair
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
-  public_key = file("./.ssh/deployer_key.pub")
+  public_key = file("~/.ssh/deployer-key.pub")
 }
 
 // Create EC2 instance
