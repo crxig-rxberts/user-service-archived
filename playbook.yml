@@ -3,7 +3,7 @@
   hosts: aws_ec2
   become: yes  # Run tasks as sudo
   vars:
-    ansible_ssh_private_key_file: ~/.ssh/deployer-key
+    ansible_ssh_private_key_file: .ssh/deployer-key
     app_name: user-service
     jar_location: ./target/user-service.jar
     deploy_location: ./opt/app/{{ app_name }}
