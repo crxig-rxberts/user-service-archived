@@ -57,11 +57,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
       # Download the JAR artifact from previous Build job
       - name: Download JAR
         uses: actions/download-artifact@v2
         with:
-          name: user-service  # same name as you specified in the upload step
+          name: user-service
           path: /target
 
       - name: Set up Terraform
@@ -83,7 +86,7 @@ jobs:
         run: bash .deploy/update-properties.sh
 
       - name: Run Ansible playbook
-        run: ansible-playbook your-playbook.yml -i localhost, -e "target_ip=$EC2_IP"
+        run: ansible-playbook playbook.yml -i localhost, -e "target_ip=$EC2_IP"
 
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
