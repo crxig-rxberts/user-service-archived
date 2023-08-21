@@ -1,8 +1,8 @@
 spring:
   datasource:
-    password: password
-    url: jdbc:postgresql://user-service.cd2hwitlzmny.eu-west-1.rds.amazonaws.com:5432/user-service
-    username: ubuntu
+    password: ${TF_VAR_DB_PASSWORD}
+    url: ${RDS_ENDPOINT}
+    username: ${TF_VAR_DB_USERNAME}
   jpa:
     hibernate:
       ddl-auto: create-drop

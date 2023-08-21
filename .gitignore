@@ -36,4 +36,7 @@ build/
 ### TF
 .terraform/**
 *.tfstate
-.deploy
+*.tfstate.backup
+*.hcl
+output.json
+.terraform

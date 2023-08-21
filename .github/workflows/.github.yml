@@ -1,16 +1,12 @@
-on: push
-name: User Service Workflow
+name: User Service Workflow & Deploy to AWS
+
+on:
+  push:
 
 jobs:
-
-
-#
-# Initial build job, run tests
-#
+  # Initial build job, run tests
   Build:
-
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:12.2
@@ -20,14 +16,11 @@ jobs:
           POSTGRES_DB: registration
         ports:
           - 5432:5432
-        options:
-               --health-cmd pg_isready
-               --health-interval 10s
-               --health-timeout 5s
-               --health-retries 5
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -39,7 +32,7 @@ jobs:
         run: docker run -d -p 1080:1080 -p 1025:1025 maildev/maildev
 
       - name: Run Application Tests
-        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test;
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
 
       - name: Report
         uses: dorny/test-reporter@v1
@@ -49,3 +42,51 @@ jobs:
           path: target/surefire-reports/*.xml
           reporter: java-junit
           fail-on-error: true
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: user-service
+          path: target/*.jar
+
+
+  # Deploy to AWS job
+  ci-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # Download the JAR artifact from previous Build job
+      - name: Download JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: user-service  # same name as you specified in the upload step
+          path: /target
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Create keypair for EC2
+        run: ssh-keygen -t rsa -b 4096 -f ~/.ssh/deployer-key
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+
+      - name: Run script to set environment variables
+        run: bash .deploy/update-properties.sh
+
+      - name: Run Ansible playbook
+        run: ansible-playbook your-playbook.yml -i localhost, -e "target_ip=$EC2_IP"
+
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_VAR_DB_PASSWORD: ${{ secrets.TF_VAR_DB_PASSWORD }}
+          TF_VAR_DB_USERNAME: ${{ secrets.TF_VAR_DB_USERNAME }}

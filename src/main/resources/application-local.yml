@@ -1,13 +1,14 @@
 server:
+  address:
   error:
     include-message: always
     include-binding-errors: always
 
 spring:
   datasource:
-    password: password
-    url: jdbc:postgresql://localhost:5432/registration
-    username: postgres
+    password: ${TF_VAR_DB_PASSWORD}
+    url: ${RDS_ENDPOINT}
+    username: ${TF_VAR_DB_USERNAME}
   jpa:
     hibernate:
       ddl-auto: create-drop
