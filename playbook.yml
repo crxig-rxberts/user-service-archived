@@ -5,8 +5,8 @@
   vars:
     ansible_ssh_private_key_file: ~/.ssh/deployer-key
     app_name: user-service
-    jar_location: /target/user-service.jar
-    deploy_location: /opt/app/{{ app_name }}
+    jar_location: ./target/user-service.jar
+    deploy_location: ./opt/app/{{ app_name }}
 
   tasks:
     - name: Update package list and install Java
