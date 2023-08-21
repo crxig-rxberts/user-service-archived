@@ -6,9 +6,9 @@ server:
 
 spring:
   datasource:
-    password: ${TF_VAR_DB_PASSWORD:postgres}
+    password: ${TF_VAR_DB_PASSWORD:password}
     url: ${RDS_ENDPOINT:jdbc:postgresql://localhost:5432/registration}
-    username: ${TF_VAR_DB_USERNAME:password}
+    username: ${TF_VAR_DB_USERNAME:postgres}
   jpa:
     hibernate:
       ddl-auto: create-drop
