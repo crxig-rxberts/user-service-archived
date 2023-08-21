@@ -32,6 +32,8 @@ jobs:
         run: docker run -d -p 1080:1080 -p 1025:1025 maildev/maildev
 
       - name: Run Application Tests
+        env:
+          SPRING_PROFILES_ACTIVE: local
         run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
 
       - name: Report
