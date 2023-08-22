@@ -101,4 +101,4 @@ jobs:
         run: bash update-properties.sh
 
       - name: Run Ansible playbook
-        run: ansible-playbook playbook.yml -i localhost, -e "target_ip=$EC2_IP"
+        run: ansible-playbook playbook.yml -i inventory.ini, -e "target_ip=$EC2_IP"
