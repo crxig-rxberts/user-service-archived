@@ -108,9 +108,13 @@ jobs:
         working-directory: .deploy
         run: cat output.json
 
-      - name: Run script to set environment variables
+      - name: Set EC2_IP and RDS_ENDPOINT from Terraform Outputs
         working-directory: .deploy
-        run: bash update-properties.sh
+        run: |
+          EC2_IP=$(jq -r '.ec2_ip.value' output.json)
+          RDS_ENDPOINT=$(jq -r '.rds_endpoint.value' output.json)
+          echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
+          echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
 
       - name: Debug EC2 IP
         run: echo "EC2 IP is $EC2_IP"
