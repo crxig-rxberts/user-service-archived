@@ -96,6 +96,10 @@ jobs:
         working-directory: .deploy
         run: terraform apply -auto-approve
 
+      - name: Generate output.json
+        working-directory: .deploy
+        run: terraform output -json > output.json
+
       - name: Run script to set environment variables
         working-directory: .deploy
         run: bash update-properties.sh
