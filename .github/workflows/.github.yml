@@ -100,9 +100,20 @@ jobs:
         working-directory: .deploy
         run: terraform output -json > output.json
 
+      - name: List files in .deploy
+        working-directory: .deploy
+        run: ls -la
+
+      - name: Show content of output.json
+        working-directory: .deploy
+        run: cat output.json
+
       - name: Run script to set environment variables
         working-directory: .deploy
         run: bash update-properties.sh
+
+      - name: Debug EC2 IP
+        run: echo "EC2 IP is $EC2_IP"
 
       - name: Run Ansible playbook
         run: ansible-playbook playbook.yml -i inventory.ini, -e "target_ip=$EC2_IP"
