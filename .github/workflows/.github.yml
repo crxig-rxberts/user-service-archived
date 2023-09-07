@@ -91,33 +91,36 @@ jobs:
       - name: Terraform Plan
         working-directory: .deploy
         run: terraform plan
+#
+#      - name: Terraform Apply
+#        working-directory: .deploy
+#        run: terraform apply -auto-approve
 
-      - name: Terraform Apply
-        working-directory: .deploy
-        run: terraform apply -auto-approve
+#      - name: Generate output.json
+#        working-directory: .deploy
+#        run: terraform output -json > output.json
+#
+#      - name: List files in .deploy
+#        working-directory: .deploy
+#        run: ls -la
+#
+#      - name: Show content of output.json
+#        working-directory: .deploy
+#        run: cat output.json
 
-      - name: Generate output.json
-        working-directory: .deploy
-        run: terraform output -json > output.json
+#      - name: Set EC2_IP and RDS_ENDPOINT from Terraform Outputs
+#        working-directory: .deploy
+#        run: |
+#          EC2_IP=$(jq -r '.ec2_ip.value' output.json)
+#          RDS_ENDPOINT=$(jq -r '.rds_endpoint.value' output.json)
+#          echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
+#          echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
+#
+#      - name: Debug EC2 IP
+#        run: echo "EC2 IP is $EC2_IP"
 
-      - name: List files in .deploy
-        working-directory: .deploy
-        run: ls -la
+      - name: Check jq installation
+        run: jq --version
 
-      - name: Show content of output.json
-        working-directory: .deploy
-        run: cat output.json
-
-      - name: Set EC2_IP and RDS_ENDPOINT from Terraform Outputs
-        working-directory: .deploy
-        run: |
-          EC2_IP=$(jq -r '.ec2_ip.value' output.json)
-          RDS_ENDPOINT=$(jq -r '.rds_endpoint.value' output.json)
-          echo "EC2_IP=$EC2_IP" >> $GITHUB_ENV
-          echo "RDS_ENDPOINT=$RDS_ENDPOINT" >> $GITHUB_ENV
-
-      - name: Debug EC2 IP
-        run: echo "EC2 IP is $EC2_IP"
-
-      - name: Run Ansible playbook
-        run: ansible-playbook playbook.yml -i inventory.ini, -e "target_ip=$EC2_IP"
+#      - name: Run Ansible playbook
+#        run: ansible-playbook playbook.yml -i inventory.ini, -e "target_ip=$EC2_IP"
